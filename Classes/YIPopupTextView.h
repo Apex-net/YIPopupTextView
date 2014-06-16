@@ -27,9 +27,7 @@ typedef NS_ENUM(NSInteger, YIPopupTextViewButtonStyle) {
 @optional
 - (void)popupTextView:(YIPopupTextView*)textView willDismissWithText:(NSString*)text cancelled:(BOOL)cancelled;
 - (void)popupTextView:(YIPopupTextView*)textView didDismissWithText:(NSString*)text cancelled:(BOOL)cancelled;
-
 @end
-
 
 @interface YIPopupTextView : YISSTextView
 
@@ -41,6 +39,9 @@ typedef NS_ENUM(NSInteger, YIPopupTextViewButtonStyle) {
 
 @property (nonatomic) CGFloat topUIBarMargin;       // set statusBar+navBar height for iOS7 fullscreen size manually
 @property (nonatomic) CGFloat bottomUIBarMargin;    // set tabBar+toolbar height for iOS7 fullscreen size manually
+
+@property (nonatomic, strong) UIImage *buttonDoneImage;
+@property (nonatomic, strong) UIImage *buttonCancelImage;
 
 - (id)initWithPlaceHolder:(NSString*)placeHolder
                  maxCount:(NSUInteger)maxCount;     // YIPopupTextViewButtonStyleRightCancel

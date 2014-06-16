@@ -363,6 +363,18 @@ typedef enum {
     
 }
 
+- (void)setButtonDoneImage:(UIImage *)doneImage
+{
+    _buttonDoneImage = doneImage;
+    [_acceptButton setImage:doneImage forState:UIControlStateNormal];
+}
+
+- (void)setButtonCancelImage:(UIImage *)cancelImage
+{
+    _buttonCancelImage = cancelImage;
+    [_closeButton setImage:cancelImage forState:UIControlStateNormal];
+}
+
 #pragma mark -
 
 #pragma mark Show/Dismiss
@@ -549,7 +561,7 @@ typedef enum {
     }
     
 #endif
-
+    
     if (notification) {
         NSDictionary* userInfo = [notification userInfo];
         
