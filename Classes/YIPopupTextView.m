@@ -18,6 +18,12 @@
 #define CLOSE_IMAGE_WIDTH   (IS_IPAD ? 60 : 30)
 #define CLOSE_BUTTON_WIDTH  (IS_IPAD ? 88 : 44)
 
+#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
 #define ANIMATION_DURATION  0.25
 
 
@@ -539,28 +545,30 @@ typedef enum {
     
     CGFloat popupViewHeight = 0;
     
-#if defined(__IPHONE_7_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
-    
-    // automatically adjusts top/bottomUIBarMargin for iOS7 fullscreen size
-    if (_viewController) {
-        UINavigationBar* navBar = _viewController.navigationController.navigationBar;
-        UIToolbar* toolbar = _viewController.navigationController.toolbar;
-        UITabBar* tabBar = _viewController.tabBarController.tabBar;
-        
-        CGFloat statusBarHeight = (IS_PORTRAIT ? [UIApplication sharedApplication].statusBarFrame.size.height : [UIApplication sharedApplication].statusBarFrame.size.width);
-        CGFloat navBarHeight = (navBar && !navBar.hidden ? navBar.bounds.size.height : 0);
-        CGFloat toolbarHeight = (toolbar && !toolbar.hidden ? toolbar.bounds.size.height : 0);
-        CGFloat tabBarHeight = (tabBar && !tabBar.hidden ? tabBar.bounds.size.height : 0);
-        
-        if (topMargin == 0.0 && (_viewController.edgesForExtendedLayout & UIRectEdgeTop)) {
-            topMargin = statusBarHeight+navBarHeight;
-        }
-        if (bottomMargin == 0.0 && (_viewController.edgesForExtendedLayout & UIRectEdgeBottom)) {
-            bottomMargin = toolbarHeight+tabBarHeight;
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        // automatically adjusts top/bottomUIBarMargin for iOS7 fullscreen size
+        if (_viewController) {
+            UINavigationBar* navBar = _viewController.navigationController.navigationBar;
+            UIToolbar* toolbar = _viewController.navigationController.toolbar;
+            UITabBar* tabBar = _viewController.tabBarController.tabBar;
+            
+            CGFloat statusBarHeight =  IS_PORTRAIT ? [UIApplication sharedApplication].statusBarFrame.size.height : [UIApplication sharedApplication].statusBarFrame.size.width;
+            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")){
+                statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+            }
+            
+            CGFloat navBarHeight = (navBar && !navBar.hidden ? navBar.bounds.size.height : 0);
+            CGFloat toolbarHeight = (toolbar && !toolbar.hidden ? toolbar.bounds.size.height : 0);
+            CGFloat tabBarHeight = (tabBar && !tabBar.hidden ? tabBar.bounds.size.height : 0);
+            
+            if (topMargin == 0.0 && (_viewController.edgesForExtendedLayout & UIRectEdgeTop)) {
+                topMargin = statusBarHeight+navBarHeight;
+            }
+            if (bottomMargin == 0.0 && (_viewController.edgesForExtendedLayout & UIRectEdgeBottom)) {
+                bottomMargin = toolbarHeight+tabBarHeight;
+            }
         }
     }
-    
-#endif
     
     if (notification) {
         NSDictionary* userInfo = [notification userInfo];
@@ -571,7 +579,6 @@ typedef enum {
         }
         
         CGPoint bgOrigin = [self.window convertPoint:CGPointZero fromView:_backgroundView];
-        
         UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
         
         switch (orientation) {
@@ -584,10 +591,16 @@ typedef enum {
             case UIInterfaceOrientationLandscapeLeft:
                 // keyboard at portrait-right
                 popupViewHeight = keyboardRect.origin.x - bgOrigin.x - topMargin;
+                if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")){
+                    popupViewHeight = keyboardRect.origin.y - bgOrigin.y - topMargin;
+                }
                 break;
             case UIInterfaceOrientationLandscapeRight:
                 // keyboard at portrait-left
                 popupViewHeight = bgOrigin.x - keyboardRect.origin.x - keyboardRect.size.width - topMargin;
+                if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")){
+                    popupViewHeight = keyboardRect.origin.y - bgOrigin.y - topMargin;
+                }
                 break;
             default:
                 break;
@@ -597,13 +610,12 @@ typedef enum {
         popupViewHeight = _backgroundView.bounds.size.height;
     }
     
-    popupViewHeight = MIN(popupViewHeight, _backgroundView.bounds.size.height-topMargin-bottomMargin);
+    popupViewHeight = MIN(fabsf(popupViewHeight), fabsf(_backgroundView.bounds.size.height-topMargin-bottomMargin));
     
     CGRect frame = _backgroundView.bounds;
     frame.origin.y = topMargin;
     frame.size.height = popupViewHeight;
     _popupView.frame = frame;
-    
 }
 
 - (void)onTextDidChangeNotification:(NSNotification*)notification
@@ -620,7 +632,7 @@ typedef enum {
 - (void)updateCount
 {
     NSUInteger textCount = [self.text length];
-    _countLabel.text = [NSString stringWithFormat:@"%d", _maxCount-textCount];
+    _countLabel.text = [NSString stringWithFormat:@"%ld", (long)_maxCount-(long)textCount];
     
     if (_maxCount > 0 && textCount > _maxCount) {
         _acceptButton.enabled = NO;

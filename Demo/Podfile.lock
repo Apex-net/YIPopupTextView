@@ -1,0 +1,14 @@
+PODS:
+  - YIPopupTextView (1.1.0)
+
+DEPENDENCIES:
+  - YIPopupTextView (from `../`)
+
+EXTERNAL SOURCES:
+  YIPopupTextView:
+    :path: ../
+
+SPEC CHECKSUMS:
+  YIPopupTextView: 7cd44de88b216ca035938d48f70e81075c619634
+
+COCOAPODS: 0.33.1
