@@ -655,12 +655,27 @@ typedef enum {
 
 - (void)handleCloseButton:(UIButton*)sender
 {
-    [self dismissWithCancelled:YES];
+    if ([self.delegate respondsToSelector:@selector(popupTextView:shouldDismissWithText:cancelled:)]) {
+        if ([self.delegate popupTextView:self shouldDismissWithText:self.text cancelled:YES]) {
+            [self dismissWithCancelled:YES];
+        }
+    }
+    else {
+        [self dismissWithCancelled:YES];
+    }
+    
 }
 
 - (void)handleAcceptButton:(UIButton*)sender
 {
-    [self dismissWithCancelled:NO];
+    if ([self.delegate respondsToSelector:@selector(popupTextView:shouldDismissWithText:cancelled:)]) {
+        if ([self.delegate popupTextView:self shouldDismissWithText:self.text cancelled:YES]) {
+            [self dismissWithCancelled:NO];
+        }
+    }
+    else {
+        [self dismissWithCancelled:NO];
+    }
 }
 
 #pragma mark

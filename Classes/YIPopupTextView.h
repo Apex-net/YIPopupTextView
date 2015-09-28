@@ -27,6 +27,8 @@ typedef NS_ENUM(NSInteger, YIPopupTextViewButtonStyle) {
 @optional
 - (void)popupTextView:(YIPopupTextView*)textView willDismissWithText:(NSString*)text cancelled:(BOOL)cancelled;
 - (void)popupTextView:(YIPopupTextView*)textView didDismissWithText:(NSString*)text cancelled:(BOOL)cancelled;
+
+- (BOOL)popupTextView:(YIPopupTextView*)textView shouldDismissWithText:(NSString*)text cancelled:(BOOL)cancelled;
 @end
 
 @interface YIPopupTextView : YISSTextView
