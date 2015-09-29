@@ -669,7 +669,7 @@ typedef enum {
 - (void)handleAcceptButton:(UIButton*)sender
 {
     if ([self.delegate respondsToSelector:@selector(popupTextView:shouldDismissWithText:cancelled:)]) {
-        if ([self.delegate popupTextView:self shouldDismissWithText:self.text cancelled:YES]) {
+        if ([self.delegate popupTextView:self shouldDismissWithText:self.text cancelled:NO]) {
             [self dismissWithCancelled:NO];
         }
     }
