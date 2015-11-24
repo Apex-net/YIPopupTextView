@@ -19,7 +19,8 @@ typedef NS_ENUM(NSInteger, YIPopupTextViewButtonStyle) {
     YIPopupTextViewButtonStyleRightDone,            // "check" on the upper-right
     YIPopupTextViewButtonStyleLeftCancelRightDone,
     YIPopupTextViewButtonStyleRightCancelAndDone,
-    YIPopupTextViewButtonStyleLeftDone
+    YIPopupTextViewButtonStyleLeftDone,
+    YIPopupTextViewButtonStyleLeftCancelAndRightDone
 };
 
 

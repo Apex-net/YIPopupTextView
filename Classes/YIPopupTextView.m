@@ -249,12 +249,13 @@ typedef enum {
             [_popupView addSubview:_countLabel];
         }
         
-        CGFloat buttonRisingRatio = 0.3;
+        CGFloat buttonRisingRatio = 0.6;
         
         // close (cancel) button
         if (buttonStyle == YIPopupTextViewButtonStyleRightCancel ||
             buttonStyle == YIPopupTextViewButtonStyleLeftCancelRightDone ||
-            buttonStyle == YIPopupTextViewButtonStyleRightCancelAndDone) {
+            buttonStyle == YIPopupTextViewButtonStyleRightCancelAndDone ||
+            buttonStyle == YIPopupTextViewButtonStyleLeftCancelAndRightDone) {
             
             _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
             [_closeButton setImage:[UIImage closeButtonImageWithSize:CGSizeMake(CLOSE_IMAGE_WIDTH, CLOSE_IMAGE_WIDTH)
@@ -275,6 +276,10 @@ typedef enum {
                     buttonX = _popupView.bounds.size.width-_textViewInsets.right-(2-buttonRisingRatio)*CLOSE_IMAGE_WIDTH;
                     autoresizing = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
                     break;
+                case YIPopupTextViewButtonStyleLeftCancelAndRightDone:
+                    buttonX = _textViewInsets.left-(buttonRisingRatio)*CLOSE_IMAGE_WIDTH;
+                    autoresizing = UIViewAutoresizingFlexibleRightMargin;
+                    break;
                 default:
                     buttonX = _textViewInsets.left-(buttonRisingRatio)*CLOSE_IMAGE_WIDTH;
                     autoresizing = UIViewAutoresizingFlexibleRightMargin;
@@ -292,7 +297,8 @@ typedef enum {
         if (buttonStyle == YIPopupTextViewButtonStyleRightDone ||
             buttonStyle == YIPopupTextViewButtonStyleLeftDone ||
             buttonStyle == YIPopupTextViewButtonStyleLeftCancelRightDone ||
-            buttonStyle == YIPopupTextViewButtonStyleRightCancelAndDone) {
+            buttonStyle == YIPopupTextViewButtonStyleRightCancelAndDone ||
+            buttonStyle == YIPopupTextViewButtonStyleLeftCancelAndRightDone) {
             
             if (!doneButtonColor) {
                 doneButtonColor = [UIColor colorWithRed:68.0/255.0 green:153.0/255.0 blue:34.0/255.0 alpha:1]; // #449922
@@ -308,7 +314,9 @@ typedef enum {
             CGFloat buttonX;
             if (buttonStyle == YIPopupTextViewButtonStyleLeftDone) {
                 buttonX = _textViewInsets.left-(buttonRisingRatio)*CLOSE_IMAGE_WIDTH;
-            }else{
+            } else if (buttonStyle == YIPopupTextViewButtonStyleLeftCancelAndRightDone) {
+                buttonX = _popupView.bounds.size.width-CLOSE_IMAGE_WIDTH;
+            } else{
                 buttonX = _popupView.bounds.size.width-_textViewInsets.right/2-CLOSE_IMAGE_WIDTH;
             }
             
